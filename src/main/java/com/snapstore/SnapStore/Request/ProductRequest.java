@@ -3,7 +3,7 @@ package com.snapstore.SnapStore.Request;
 import java.math.BigDecimal;
 import java.util.Date;
 
-public class ProductRequest extends DateRequest{
+public class ProductRequest extends DateRequest {
 
     private Integer id;
     private String productName;
@@ -18,6 +18,24 @@ public class ProductRequest extends DateRequest{
     private int totalQty;
     private Integer UserId;
     private Integer companyId;
+    private int quantity;
+    private BigDecimal total;
+
+    public int getQuantity() {
+        return quantity;
+    }
+
+    public void setQuantity(int quantity) {
+        this.quantity = quantity;
+    }
+
+    public BigDecimal getTotal() {
+        return total;
+    }
+
+    public void setTotal(BigDecimal total) {
+        this.total = total;
+    }
 
     public Integer getId() {
         return id;
