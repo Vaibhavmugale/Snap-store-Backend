@@ -24,6 +24,9 @@ public class BillingChildEntity {
     @Column(name = "qty", precision = 10, scale = 2)
     private Integer qty;
 
+    @Column(name = "total", precision = 10, scale = 2)
+    private BigDecimal total;
+
     public Integer getBilling() {
         return billing;
     }
@@ -61,5 +64,13 @@ public class BillingChildEntity {
 
     public void setQty(Integer qty) {
         this.qty = qty;
+    }
+
+    public BigDecimal getTotal() {
+        return total;
+    }
+
+    public void setTotal(BigDecimal total) {
+        this.total = total;
     }
 }
