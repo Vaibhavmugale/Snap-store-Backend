@@ -20,6 +20,15 @@ public class ProductRequest extends DateRequest {
     private Integer companyId;
     private int quantity;
     private BigDecimal total;
+    private BigDecimal mrp;
+    
+    public BigDecimal getMrp() {
+        return mrp;
+    }
+
+    public void setMrp(BigDecimal mrp) {
+        this.mrp = mrp;
+    }
 
     public int getQuantity() {
         return quantity;

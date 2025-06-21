@@ -31,6 +31,9 @@ public class ProductEntity extends DateEntity{
     
     @Column(name = "price")
     private BigDecimal price;
+
+     @Column(name = "mrp")
+    private BigDecimal mrp;
     
     @Column(name = "discount")
     private BigDecimal discount;
@@ -141,6 +144,14 @@ public class ProductEntity extends DateEntity{
 
     public void setCompanyId(Integer companyId) {
         this.companyId = companyId;
+    }
+
+    public BigDecimal getMrp() {
+        return mrp;
+    }
+
+    public void setMrp(BigDecimal mrp) {
+        this.mrp = mrp;
     }
     
 }
