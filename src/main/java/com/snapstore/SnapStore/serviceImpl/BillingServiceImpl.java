@@ -14,6 +14,7 @@ import com.snapstore.SnapStore.Enity.BillingChildEntity;
 import com.snapstore.SnapStore.Enity.BillingEntity;
 import com.snapstore.SnapStore.Repository.BillingChildRepository;
 import com.snapstore.SnapStore.Repository.BillingRepository;
+import com.snapstore.SnapStore.Repository.ProductRepository;
 import com.snapstore.SnapStore.Request.BillingRequest;
 import com.snapstore.SnapStore.Request.ProductRequest;
 import com.snapstore.SnapStore.service.BillingService;
@@ -29,6 +30,9 @@ public class BillingServiceImpl implements BillingService {
 
     @Autowired
     private ModelMapper modelMapper;
+
+    @Autowired
+    ProductRepository productRepo;
 
     @Override
     public List<BillingRequest> getBilling(Integer billingId) {
@@ -111,7 +115,7 @@ public class BillingServiceImpl implements BillingService {
             child.setTotal(e.getTotal());
 
             billingChildRepo.save(child);
-
+            productRepo.updateProductQty(e.getQuantity(),e.getId());
         });
         return modelMapper.map(entity, BillingRequest.class);
     }
