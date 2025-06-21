@@ -53,6 +53,20 @@ public class ProductController {
         }
     }
 
+      @GetMapping("/getdashboard/{id}")
+    public ResponseEntity<?> getdashboard(@PathVariable Integer id) {
+        try {
+            ProductRequest products = productService.getdashboard(id);
+            return ResponseEntity.ok(products); 
+        } catch (ResourceNotFoundException ex) {
+            ErrorResponse errorResponse = new ErrorResponse(ex.getMessage(), HttpStatus.NOT_FOUND.value(), "Resource Not Found");
+            return new ResponseEntity<>(errorResponse, HttpStatus.NOT_FOUND);
+        } catch (Exception ex) {
+            ErrorResponse errorResponse = new ErrorResponse("Internal server error", HttpStatus.INTERNAL_SERVER_ERROR.value(), "Internal Error");
+            return new ResponseEntity<>(errorResponse, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
     @PostMapping("/add")
     public ResponseEntity<?> addProduct(@RequestBody ProductRequest product) {
         try {

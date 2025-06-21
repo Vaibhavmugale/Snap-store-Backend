@@ -15,4 +15,6 @@ public interface ProductService {
 
     public ProductRequest getProductById(Integer id);
 
+    public ProductRequest getdashboard(Integer id);
+
 }

@@ -54,5 +54,20 @@ public class ProductServiceImpl implements ProductService {
             .orElseThrow(() -> new RuntimeException("Product not found with ID: " + id));
         return modelMapper.map(entity, ProductRequest.class);
     }
+
+     @Override
+    public ProductRequest getdashboard(Integer id) {
+
+        List<Object[]> results = productRepo.getdashboard(id);
+
+        for (Object[] row : results) {
+            ProductRequest request = new ProductRequest();
+            request.setTotalProducts(row[0] != null ? (Long) row[0] : 0);
+            request.setTotalCustomer(row[1] != null ? (Long) row[1] : 0);
+            request.setTotalBills(row[2] != null ? (Long) row[2] : 0);
+            return request;
+        }
+        return null;
+    }
     
 }

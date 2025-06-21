@@ -21,7 +21,34 @@ public class ProductRequest extends DateRequest {
     private int quantity;
     private BigDecimal total;
     private BigDecimal mrp;
-    
+    private Long totalProducts;
+    private Long totalCustomer;
+    private Long totalBills;
+
+    public Long getTotalProducts() {
+        return totalProducts;
+    }
+
+    public void setTotalProducts(Long totalProducts) {
+        this.totalProducts = totalProducts;
+    }
+
+    public Long getTotalCustomer() {
+        return totalCustomer;
+    }
+
+    public void setTotalCustomer(Long totalCustomer) {
+        this.totalCustomer = totalCustomer;
+    }
+
+    public Long getTotalBills() {
+        return totalBills;
+    }
+
+    public void setTotalBills(Long totalBills) {
+        this.totalBills = totalBills;
+    }
+
     public BigDecimal getMrp() {
         return mrp;
     }
