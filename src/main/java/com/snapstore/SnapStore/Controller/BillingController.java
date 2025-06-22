@@ -3,6 +3,8 @@ package com.snapstore.SnapStore.Controller;
 import com.snapstore.SnapStore.ExceptionHandler.ErrorResponse;
 import com.snapstore.SnapStore.ExceptionHandler.ResourceNotFoundException;
 import com.snapstore.SnapStore.Request.BillingRequest;
+import com.snapstore.SnapStore.Request.ProductRequest;
+import com.snapstore.SnapStore.Request.ReportRequest;
 import com.snapstore.SnapStore.service.BillingService;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,13 +28,15 @@ public class BillingController {
             if (billings.isEmpty()) {
                 throw new ResourceNotFoundException("No billings found.");
             }
-            return ResponseEntity.ok(billings); 
+            return ResponseEntity.ok(billings);
         } catch (ResourceNotFoundException ex) {
-            ErrorResponse errorResponse = new ErrorResponse(ex.getMessage(), HttpStatus.NOT_FOUND.value(), "Resource Not Found");
+            ErrorResponse errorResponse = new ErrorResponse(ex.getMessage(), HttpStatus.NOT_FOUND.value(),
+                    "Resource Not Found");
             return new ResponseEntity<>(errorResponse, HttpStatus.NOT_FOUND);
         } catch (Exception ex) {
             ex.printStackTrace();
-            ErrorResponse errorResponse = new ErrorResponse("Internal server error", HttpStatus.INTERNAL_SERVER_ERROR.value(), "Internal Error");
+            ErrorResponse errorResponse = new ErrorResponse("Internal server error",
+                    HttpStatus.INTERNAL_SERVER_ERROR.value(), "Internal Error");
             return new ResponseEntity<>(errorResponse, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
@@ -44,13 +48,15 @@ public class BillingController {
             if (billings.getId() == null && billings.getId() == 0) {
                 throw new ResourceNotFoundException("No billings found.");
             }
-            return ResponseEntity.ok(billings); 
+            return ResponseEntity.ok(billings);
         } catch (ResourceNotFoundException ex) {
-            ErrorResponse errorResponse = new ErrorResponse(ex.getMessage(), HttpStatus.NOT_FOUND.value(), "Resource Not Found");
+            ErrorResponse errorResponse = new ErrorResponse(ex.getMessage(), HttpStatus.NOT_FOUND.value(),
+                    "Resource Not Found");
             return new ResponseEntity<>(errorResponse, HttpStatus.NOT_FOUND);
         } catch (Exception ex) {
-             ex.printStackTrace();
-            ErrorResponse errorResponse = new ErrorResponse("Internal server error", HttpStatus.INTERNAL_SERVER_ERROR.value(), "Internal Error");
+            ex.printStackTrace();
+            ErrorResponse errorResponse = new ErrorResponse("Internal server error",
+                    HttpStatus.INTERNAL_SERVER_ERROR.value(), "Internal Error");
             return new ResponseEntity<>(errorResponse, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
@@ -62,14 +68,44 @@ public class BillingController {
                 throw new IllegalArgumentException("Billing data is invalid");
             }
             BillingRequest addedBilling = billingService.addBilling(billing);
-            return ResponseEntity.status(HttpStatus.CREATED).body(addedBilling); 
+            return ResponseEntity.status(HttpStatus.CREATED).body(addedBilling);
         } catch (IllegalArgumentException ex) {
-            ErrorResponse errorResponse = new ErrorResponse(ex.getMessage(), HttpStatus.BAD_REQUEST.value(), "Bad Request");
+            ErrorResponse errorResponse = new ErrorResponse(ex.getMessage(), HttpStatus.BAD_REQUEST.value(),
+                    "Bad Request");
             return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
         } catch (Exception ex) {
             ex.printStackTrace();
-            ErrorResponse errorResponse = new ErrorResponse("Internal server error", HttpStatus.INTERNAL_SERVER_ERROR.value(), "Internal Error");
+            ErrorResponse errorResponse = new ErrorResponse("Internal server error",
+                    HttpStatus.INTERNAL_SERVER_ERROR.value(), "Internal Error");
             return new ResponseEntity<>(errorResponse, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
+
+    @PostMapping("/generateReport")
+    public ResponseEntity<?> generateReport(@RequestBody ReportRequest report) {
+        try {
+            if (report == null) {
+                throw new IllegalArgumentException("report data is invalid");
+            }
+
+            List<ProductRequest> addedBilling = billingService.generateReport(report);
+            return ResponseEntity.status(HttpStatus.CREATED).body(addedBilling);
+
+        } catch (IllegalArgumentException ex) {
+            ErrorResponse errorResponse = new ErrorResponse(
+                    ex.getMessage(),
+                    HttpStatus.BAD_REQUEST.value(),
+                    "Bad Request");
+            return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
+
+        } catch (Exception ex) {
+            ex.printStackTrace(); // You can remove this in production
+            ErrorResponse errorResponse = new ErrorResponse(
+                    "Internal server error",
+                    HttpStatus.INTERNAL_SERVER_ERROR.value(),
+                    "Internal Error");
+            return new ResponseEntity<>(errorResponse, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
 }

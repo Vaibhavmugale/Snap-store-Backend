@@ -24,7 +24,36 @@ public class ProductRequest extends DateRequest {
     private Long totalProducts;
     private Long totalCustomer;
     private Long totalBills;
+    private String customerName;
+    private String customerEmail;
+    
+    public String getCustomerName() {
+        return customerName;
+    }
 
+    public void setCustomerName(String customerName) {
+        this.customerName = customerName;
+    }
+
+    public String getCustomerEmail() {
+        return customerEmail;
+    }
+
+    public void setCustomerEmail(String customerEmail) {
+        this.customerEmail = customerEmail;
+    }
+
+    public String getCustomerPhone() {
+        return customerPhone;
+    }
+
+    public void setCustomerPhone(String customerPhone) {
+        this.customerPhone = customerPhone;
+    }
+
+    private String customerPhone;
+
+    
     public Long getTotalProducts() {
         return totalProducts;
     }

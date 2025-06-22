@@ -3,6 +3,7 @@ package com.snapstore.SnapStore.serviceImpl;
 import java.math.BigDecimal;
 import java.util.Date;
 import java.sql.Timestamp;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -17,6 +18,7 @@ import com.snapstore.SnapStore.Repository.BillingRepository;
 import com.snapstore.SnapStore.Repository.ProductRepository;
 import com.snapstore.SnapStore.Request.BillingRequest;
 import com.snapstore.SnapStore.Request.ProductRequest;
+import com.snapstore.SnapStore.Request.ReportRequest;
 import com.snapstore.SnapStore.service.BillingService;
 
 @Service
@@ -115,9 +117,78 @@ public class BillingServiceImpl implements BillingService {
             child.setTotal(e.getTotal());
 
             billingChildRepo.save(child);
-            productRepo.updateProductQty(e.getQuantity(),e.getId());
+            productRepo.updateProductQty(e.getQuantity(), e.getId());
         });
         return modelMapper.map(entity, BillingRequest.class);
     }
+@Override
+public List<ProductRequest> generateReport(ReportRequest report) {
+    if (report == null) {
+        throw new IllegalArgumentException("Report data is missing.");
+    }
 
+    Integer customerId = report.getCustomerId();
+    Integer productId = report.getProductId();
+    LocalDate fromDate = report.getFromDate();
+    LocalDate toDate = report.getToDate();
+
+    boolean hasCustomer = customerId != null && customerId != 0;
+    boolean hasProduct = productId != null && productId != 0;
+    boolean hasFrom = fromDate != null;
+    boolean hasTo = toDate != null;
+
+    List<ProductRequest> requests = new ArrayList<>();
+    List<Object[]> results = null;
+
+    if ((hasFrom && !hasTo) || (!hasFrom && hasTo)) {
+        throw new IllegalArgumentException("Both From Date and To Date are required together.");
+    }
+
+    if (!hasCustomer && !hasProduct && !hasFrom && !hasTo) {
+        throw new IllegalArgumentException("At least one filter must be selected.");
+    }
+
+    if ((hasCustomer && hasProduct && (!hasFrom || !hasTo)) ||
+        (hasCustomer && hasFrom && !hasTo) ||
+        (hasProduct && hasFrom && !hasTo) ||
+        (hasCustomer && hasTo && !hasFrom) ||
+        (hasProduct && hasTo && !hasFrom)) {
+        throw new IllegalArgumentException("Date range must be complete if used with other filters.");
+    }
+
+    if (hasCustomer && hasProduct && hasFrom && hasTo) {
+        results = billingRepo.getReportByAllFilters(customerId, productId, fromDate, toDate);
+    } else if (hasCustomer && hasProduct) {
+        results = billingRepo.getReportByCustomerAndProduct(customerId, productId);
+    } else if (hasCustomer && hasFrom && hasTo) {
+        results = billingRepo.getReportByCustomerAndDate(customerId, fromDate, toDate);
+    } else if (hasProduct && hasFrom && hasTo) {
+        results = billingRepo.getReportByProductAndDate(productId, fromDate, toDate);
+    } else if (hasCustomer) {
+        results = billingRepo.getReportByCustomer(customerId);
+    } else if (hasProduct) {
+        results = billingRepo.getReportByProduct(productId);
+    } else if (hasFrom && hasTo) {
+        results = billingRepo.getReportByDateRange(fromDate, toDate);
+    } else {
+        throw new IllegalArgumentException("Invalid filter combination.");
+    }
+
+    for (Object[] row : results) {
+        ProductRequest request = new ProductRequest();
+        request.setProductName(row[0] != null ? (String) row[0] : "");
+        request.setDiscount(row[1] != null ? (BigDecimal) row[1] : BigDecimal.ZERO);
+        request.setGst(row[2] != null ? (BigDecimal) row[2] : BigDecimal.ZERO);
+        request.setPrice(row[3] != null ? (BigDecimal) row[3] : BigDecimal.ZERO);
+        request.setTotalQty(row[4] != null ? (Integer) row[4] : 0);
+        request.setTotal(row[5] != null ? (BigDecimal) row[5] : BigDecimal.ZERO);
+        request.setCustomerName(row[6] != null ? (String) row[6] : "");
+        request.setCustomerEmail(row[7] != null ? (String) row[7] : "");
+        request.setCustomerPhone(row[8] != null ? (String) row[8] : "");
+        request.setCreatedDate(row[9] != null ? (Date) row[9] : null);
+        requests.add(request);
+    }
+
+    return requests;
+}
 }
